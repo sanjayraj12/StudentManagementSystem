@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.ew.entity.EmsEntity;
+
 import com.example.ew.exception.ResourceNotFoundException;
 import com.example.ew.model.Student;
 import com.example.ew.repository.StudentRepository;
@@ -38,13 +39,13 @@ public class StudentController {
 		
 	}
 	
-	@GetMapping("/stud/{id}")
+	@GetMapping("/{id}")
 	public Student getById(@PathVariable long id) {
 	    return studentrepo.findById(id)
 	            .orElseThrow(() ->  new ResourceNotFoundException("Student"," Id", id));
 	}
 	
-	@PutMapping("/stud/{id}")
+	@PutMapping("/{id}")
 	Student updatestud(@RequestBody Student student,@PathVariable long id) {
 Student std =studentrepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Student"," Id", id) );
 		
@@ -53,6 +54,14 @@ Student std =studentrepo.findById(id).orElseThrow(()-> new ResourceNotFoundExcep
 		std.setEmail(student.getEmail());
 		studentrepo.save(std);
 		return std;
-		}	            
+		}	
+	
+	@DeleteMapping("/{id}")
+	String delete(@PathVariable long id) {
+		Student std =studentrepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Student"," Id", id) );
+		 studentrepo.delete(std);
+		 
+		return "Deleted Successfully";
+	}
 		
 	}
