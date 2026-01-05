@@ -1,11 +1,21 @@
-# Use Java 17 (safe for Spring Boot)
-FROM eclipse-temurin:17-jdk-alpine
+# Use Java 17 with Maven
+FROM maven:3.9.0-eclipse-temurin-17 AS build
 
-# Set working directory
 WORKDIR /app
 
-# Copy Maven build
-COPY target/*.jar app.jar
+# Copy pom and source code
+COPY pom.xml .
+COPY src ./src
+
+# Build the Spring Boot JAR
+RUN mvn clean package -DskipTests
+
+# Use lightweight Java runtime for final image
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /app
+
+# Copy the JAR from build stage
+COPY --from=build /app/target/*.jar app.jar
 
 # Expose port
 EXPOSE 8080
